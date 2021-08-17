@@ -1,0 +1,46 @@
+.book{
+    width: fit-content;
+    margin: 10px auto;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.book > button{
+    margin-top: 10px;
+}
+
+.property_form__control{
+    margin: 10px auto;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 5px auto;
+}
+
+.book_form__control > label {
+    width: 170px;
+    margin-top: 20px;
+    margin-left: 5px;
+    margin-right: 15px;
+    text-align:left;
+    color: black;
+   
+}
+
+.book_form__control > input {
+    width: 130%;
+    justify-content: center;
+}
+
+.book_form__control > button {
+    width: 100%;
+    height: 25px;
+    margin-top: 15px;
+}
+
+
+.book_form__control.time {
+    display: flex;
+    flex-direction: row;
+}
