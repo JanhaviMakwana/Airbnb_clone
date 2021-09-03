@@ -4,26 +4,24 @@ import { Card, CardMedia } from '@material-ui/core';
 
 const styles = makeStyles((theme) => ({
     image: {
-        width: '400px',
-        height: '300px'
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        marginBottom: 0,
+        margin: '0 5px'
     },
     media: {
         height: '100%',
-        width: '100%'
-    },
-    poster: {
-        maxWidth: '345px',
-        height: '200px',
-        margin: 'auto 5px'
+        width: '100%',
     }
-}));
+})); 
 
 function ImageCarousel({ image }) {
-    const classes = styles();
+     const classes = styles(); 
     return (
-        <Card className={classes.image}>
-            <CardMedia style={{ height: '100%', width: '100%' }}> 
-                <img src={image} className={classes.media} alt=""/>
+        <Card >
+            <CardMedia className={classes.media}> 
+                <img src={image} className={classes.image}    alt=""/>
              </CardMedia>
         </Card>
     );

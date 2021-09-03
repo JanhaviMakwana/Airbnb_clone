@@ -1,54 +1,146 @@
 import React, { useState, useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
 import axios from '../../axios';
+import moment from 'moment';
 import SearchResult from '../SearchResult/SearchResult';
-import { Button } from '@material-ui/core';
+import { withState } from '../../airbnb-context';
+import { SET_ERROR } from '../../store/actionTypes';
+/* import { Button, Select } from '@material-ui/core'; */
 import './SearchPage.css';
 
 
 function SearchPage(props) {
+    console.log(props);
+    const filter = props.location.state ? props.location.state.filter : null;
 
+    const ref = React.createRef(null);
     const [result, setResult] = useState();
+    const [price, setPrice] = useState(1);
+    const [city, setCity] = useState(filter ? filter.city : '');
+    const [cancellation, setCancellation] = useState(false);
+    const [guests, setGuests] = useState();
+    const startDate = filter ? filter.startDate : null;
+    const endDate = filter ? filter.endDate : null;
+
+    /* new Date().setMonth(startDate.getMonth()+1) */
+    const keyword = new URLSearchParams(props.location.search).get('keyword') || '';
 
     useEffect(() => {
-        const fetch = async () => {
-            const searchedResult = await axios.get('/get-properties');
-            console.log(searchedResult.data.properties);
-            setResult(searchedResult.data.properties);
-        }
-        fetch();
-    }, [])
+
+
+        axios.post('/search', {
+            city: city,
+            cancellation: cancellation,
+            guests: guests,
+            startDate: startDate,
+            endDate: endDate,
+            price: price
+        })
+            .then(res => {
+                console.log(res);
+                setResult(res.data.properties);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
+
+        /*  axios.get(`/get-properties?keyword=${keyword}`)
+              .then(res => {
+                  setResult(res.data.properties);
+              })
+              .catch(e => {
+                  dispatch({ type: SET_ERROR, error: e });
+              }); */
+
+        // eslint-disable-next-line
+    }, [keyword, cancellation, price, city, guests])
 
     const onFullPropertyView = id => {
         props.history.push(`/explore/${id}`);
     }
 
+    const cityHandler = (event) => {
+        setCity(event.target.value);
+
+    }
+
+    const priceHandler = (event) => {
+        setPrice(event.target.value);
+
+    }
+
+    const guestHandler = (event) => {
+        console.log(event.target.name);
+        console.log(event.target.value);
+        setGuests(event.target.value)
+    }
+
     return (
         <div className="searchPage">
             <div className="searchPage__info">
-                {/*   <p>62 stays  .  26 august to 30 august  .  2 guest</p> */}
-                {/* for filter */}
+                {startDate && <p> {moment(startDate).format('LL')} to {moment(endDate).format('LL')}</p>} 
                 <h1>Stays nearby</h1>
-                <Button
-                    variant="outlined"
-                >Cancellation Flexibility
-                </Button>
-                <Button
-                    variant="outlined"
-                >Type of place
-                </Button>
-                <Button
-                    variant="outlined"
-                >Price
-                </Button>
-                <Button
-                    variant="outlined"
-                >Rooms and beds
-                </Button>
-                <Button
-                    variant="outlined"
-                >More filters
-                </Button>
+                <div className="filter__options">
+                    <div className={cancellation ? 'options active' : 'options'}>
+                        <button type="button" onClick={() => setCancellation(!cancellation)}>Cancellation Flexibility
+                        </button>
+                    </div>
+                    <div className="options">
+                        <select name="city" className="option" onChange={cityHandler}>
+                            <option value="">
+                                All
+                            </option>
+                            <option value="ahmedabad">
+                                Ahmedabad
+                            </option>
+                            <option value="surat">
+                                Surat
+                            </option>
+                            <option value="gandhinagar">
+                                Gandhinagar
+                            </option>
+                            <option value="mumbai">
+                                Mumbai
+                            </option>
+                        </select>
+                    </div>
+                    <div className="options">
+                        <select name="price" className="option" onChange={priceHandler}>
+                            <option value={1}>
+                                All
+                            </option>
+                            <option value={20}>
+                                Above 20$
+                            </option>
+                            <option value={30}>
+                                Above 30$
+                            </option>
+                            <option value={40}>
+                                Above 40$
+                            </option>
+                            <option value={50}>
+                                Above 50$
+                            </option>
+                        </select>
+                    </div>
+                    <div className="options">
+                        <p>No of people</p>
+                        <select name="guests" className="option" onChange={guestHandler}>
+                            <option value="">
+                                All
+                            </option>
+                            <option value={1} >
+                                1
+                            </option>
+                            <option value={2}>
+                                2
+                            </option>
+                            <option value={3}>
+                                3
+                            </option>
+                        </select>
+                    </div>
+                </div>
             </div>
             {result && result.map((result, index) => {
                 return <SearchResult
@@ -61,73 +153,7 @@ function SearchPage(props) {
                     price={result.price + '$ / night'}
                 />
             })}
-
-            {/* <SearchResult
-                img="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ_wbPYTxQPMcBh7SPzLFActXnP3uhifeVT_g&usqp=CAU"
-                location="Private room in center of London"
-                title="Stay at this spacious Edwardian House"
-                description="1 guest · 1 bedroom · 1 bed · 1.5 shared bthrooms · Wifi · Kitchen · Free parking · Washing Machine"
-                star={4.73}
-                price="£30 / night"
-                total="£117 total"
-            />
-
-            <SearchResult
-                img="https://www.expatkings.com/wp-content/uploads/2018/10/Airbnb-rental-tips.-Hostmaker-1-620x349.jpg"
-                location="Private room in center of London"
-                title="Independant luxury studio apartment"
-                description="2 guest · 3 bedroom · 1 bed · 1.5 shared bthrooms · Wifi · Kitchen"
-                star={4.3}
-                price="£40 / night"
-                total="£157 total"
-            />
-
-            <SearchResult
-                img="https://www.smartertravel.com/uploads/2017/07/Untitled-design-8.jpg"
-                location="Private room in center of London"
-                title="London Studio Apartments"
-                description="4 guest · 4 bedroom · 4 bed · 2 bathrooms · Free parking · Washing Machine"
-                star={3.8}
-                price="£35 / night"
-                total="£207 total"
-            />
-            <SearchResult
-                img="https://cdn.bisnow.net/fit?height=489&type=jpeg&url=https%3A%2F%2Fs3.amazonaws.com%2Fcdn.bisnow.net%2Fcontent%2Fimages%2F2017%2F05%2F59151d0978bbf_https_press_atairbnb_com_app_uploads_2016_12_midtown_4.jpeg&width=717&sign=FeltIPi9cOWA36nVIeDvZxwgtiCZrpUyMRdvyZviTUI"
-                location="Private room in center of London"
-                title="30 mins to Oxford Street, Excel London"
-                description="1 guest · 1 bedroom · 1 bed · 1.5 shared bthrooms · Wifi · Kitchen · Free parking · Washing Machine"
-                star={4.1}
-                price="£55 / night"
-                total="£320 total"
-            />
-            <SearchResult
-                img="https://media.cntraveler.com/photos/5a8f258bd363c34048b35aac/master/w_2250,h_1500,c_limit/airbnb-plus-london.jpg"
-                location="Private room in center of London"
-                title="Spacious Peaceful Modern Bedroom"
-                description="3 guest · 1 bedroom · 1 bed · 1.5 shared bthrooms · Wifi · Free parking · Dry Cleaning"
-                star={5.0}
-                price="£60 / night"
-                total="£450 total"
-            />
-            <SearchResult
-                img="https://static.trip101.com/paragraph_media/pictures/001/676/061/large/969ae4bb-efd1-4fb9-a4e3-5cb3316dd3c9.jpg?1562227937"
-                location="Private room in center of London"
-                title="The Blue Room In London"
-                description="2 guest · 1 bedroom · 1 bed · 1.5 shared bthrooms · Wifi · Washing Machine"
-                star={4.23}
-                price="£65 / night"
-                total="£480 total"
-            />
-            <SearchResult
-                img="https://image.insider.com/585029a0dd0895bc548b4b8b?width=750&format=jpeg&auto=webp"
-                location="Private room in center of London"
-                title="5 Star Luxury Apartment"
-                description="3 guest · 1 bedroom · 1 bed · 1.5 shared bthrooms · Wifi · Kitchen · Free parking · Washing Machine"
-                star={3.85}
-                price="£90 / night"
-                total="£650 total"
-            /> */}
         </div>
     );
 }
-export default SearchPage;
+export default withState(SearchPage);

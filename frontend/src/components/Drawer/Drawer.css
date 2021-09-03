@@ -32,3 +32,9 @@
     border-bottom: rgb(228, 220, 220,0.5);
     color: rgb(10, 10, 10, 0.7);
 }
+
+.navigation__item p {
+    font-size: large;
+    font-weight: 500;
+    padding-left: 35px;
+}

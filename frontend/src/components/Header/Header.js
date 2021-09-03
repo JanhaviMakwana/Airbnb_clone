@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Drawer from '../Drawer/Drawer';
 import SearchIcon from '@material-ui/icons/Search';
 import LanguageIcon from '@material-ui/icons/Language';
@@ -7,8 +8,15 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import './Header.css';
 
-function Header() {
+function Header(props) {
     const [showDrawer, setShowDrawer] = useState(false);
+
+    const searchHandler = (event) => {
+        const keyword = event.target.value;
+        props.history.replace(`/search?keyword=${keyword}`);
+
+    }
+
     return (
         <div className="header">
             <Link to="/">
@@ -21,10 +29,11 @@ function Header() {
             <div className="header__center">
                 <input
                     type="text"
+                    onChange={searchHandler}
                 />
                 <SearchIcon />
             </div>
-            <div  className="header__right">
+            <div className="header__right">
                 <div className="header__icons">
                     <p>Become a host</p>
                     <LanguageIcon />
@@ -40,4 +49,4 @@ function Header() {
     )
 }
 
-export default Header;
+export default withRouter(Header);

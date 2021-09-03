@@ -1,0 +1,12 @@
+.error {
+    border: 1px solid black;
+    width: 50%;
+    margin: 50px auto;
+    justify-items: center;
+}
+.error > p {
+    text-align: center;
+}
+.error > button{
+   margin: 100px auto 10px 10px;
+}

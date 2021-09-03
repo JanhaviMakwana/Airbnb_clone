@@ -9,21 +9,18 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email: email });
     if (!user) {
         const error = new Error('User not found!');
-        //error-code
         throw error;
     }
     const passwordMatch = bcrypt.compare(password, user.password);
     if (!passwordMatch) {
         const error = new Error('Password is Incorrect');
-        //error-code
         throw error;
     }
     const token = jwt.sign({ userId: user._id, email: user.email }, config.appKey, { expiresIn: '1h' });
     return res.json({
         _id: user._id.toString(),
         token: token
-    })
-
+    });
 
 }
 
@@ -32,7 +29,6 @@ exports.signup = async (req, res) => {
     const existingUser = await User.findOne({ email: email });
     if (existingUser) {
         const error = new Error('Email is already in use!');
-        //error-code
         throw error;
     }
     const hasedPw = await bcrypt.hash(password, 12);

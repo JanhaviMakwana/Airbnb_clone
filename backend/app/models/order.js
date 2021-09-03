@@ -29,8 +29,12 @@ const orderSchema = new Schema({
         type: Number,
         required: true
     },
-    nights: {
-        type: Number,
+    startDate: {
+        type: String,
+        required: true
+    },
+    endDate: {
+        type: String,
         required: true
     },
     paymentMode: {

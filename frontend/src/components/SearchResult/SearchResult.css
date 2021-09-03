@@ -26,12 +26,6 @@
     margin-left: 20px;
 }
 
-.searchResult__heart{
-    position: absolute;
-    top: 20px;
-    right: 40px;
-}
-
 .searchResult__infoTop {
     width: 40vw;
 }

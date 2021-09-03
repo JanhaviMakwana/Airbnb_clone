@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
-import {Button} from '@material-ui/core';
+import { withState } from '../../airbnb-context';
+import { SET_ERROR } from '../../store/actionTypes';
+import { Button } from '@material-ui/core';
 import ImageCarousel from '../Carousel/Carousel';
 import StarIcon from '@material-ui/icons/Star';
 import Carousel from 'react-multi-carousel';
@@ -11,7 +13,6 @@ import './FullProperty.css';
 
 const responsive = {
     superLargeDesktop: {
-        // the naming can be any, depends on you.
         breakpoint: { max: 4000, min: 3000 },
         items: 5
     },
@@ -35,22 +36,29 @@ function FullProperty(props) {
     const [property, setProperty] = useState();
     const { propertyId } = props.match.params;
     const images = new Array(14).fill(1);
+
     useEffect(() => {
-        const fetch = async () => {
-            const fullProperty = await axios.get(`/get-property/${propertyId}`);
-            console.log(fullProperty.data);
-            setProperty(fullProperty.data);
-        }
-        fetch();
+        axios.get(`/get-property/${propertyId}`).then(res => {
+            setProperty(res.data)
+        }).catch(e => {
+            props.dispatch({ type: SET_ERROR, error: e });
+        });
+        // eslint-disable-next-line
     }, [propertyId])
 
     const bookHandler = () => {
-        console.log("click");
-        console.log(propertyId);
-        props.history.push({
+        /* props.history.push({
             pathname: `/book/${propertyId}`,
             state: { property: property }
-        })
+        }) */
+         if (props.state.userId) { 
+            props.history.push({
+                pathname: `/book/${propertyId}`,
+                state: { property: property }
+            })
+         } else {
+            props.history.push('/login');
+        }  
     }
 
     return (
@@ -77,12 +85,10 @@ function FullProperty(props) {
                         })}
                     </p>
 
-                    <Button variant="contained" color="primary"  onClick={bookHandler}>Book</Button>
+                    <Button variant="contained" color="primary" onClick={bookHandler}>Book</Button>
                 </div>
-                <Carousel responsive={responsive} infinite={true} partialVisbile={false} style={{
-                    height: '350px', width: '100%',
-                    margin: '0 20px'
-                }}>
+
+                <Carousel responsive={responsive} infinite={true} partialVisbile={false} >
                     {images.map((image, index) => {
                         return <ImageCarousel key={index} image={require(`../../assets/P_1/${index + 1}.jpg`).default} />
                     })}
@@ -92,4 +98,4 @@ function FullProperty(props) {
     );
 }
 
-export default withRouter(FullProperty);
+export default withRouter(withState(FullProperty));

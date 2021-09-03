@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../axios';
+import { withState } from '../../airbnb-context';
+import { Button } from '@material-ui/core';
+import { SET_ERROR } from '../../store/actionTypes';
 import Card from '../Card/Card';
 import Banner from '../Banner/Banner';
 import './Home.css';
 
-function Home() {
+function Home(props) {
 
     const [properties, setProperties] = useState([]);
 
     useEffect(() => {
-        const fetch = async () => {
-            const fetchedProperties = await axios.get('/get-properties')
-            console.log(fetchedProperties.data);
-            setProperties(fetchedProperties.data.properties);
-        }
-        fetch();
+        axios.get('/get-properties')
+            .then(res => {
+                setProperties(res.data.properties);
+            })
+            .catch(err => {
+                props.dispatch({ type: SET_ERROR, error: err })
+            })
+        // eslint-disable-next-line
     }, [])
 
     return (
         <div className="home">
+
             <Banner />
             <div className='home__section'>
                 {properties && properties.slice(0, 3).map((property, index) => {
@@ -33,12 +39,12 @@ function Home() {
             <div className='home__section'>
                 {
                     properties && properties.slice(3, 6).map((property, index) => {
-                      return  <Card
+                        return <Card
                             key={index}
                             src={`http://localhost:8080/${property.image}`}
                             title={property.title}
                             description={property.description}
-                            price={property.price+ '$'}
+                            price={property.price + '$'}
                         />
                     })
                 }
@@ -47,4 +53,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default withState(Home);

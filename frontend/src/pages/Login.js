@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { withState } from '../airbnb-context';
-import { Button,  Input, FormControl , FormLabel} from '@material-ui/core';
+import { Button,  Input,  FormLabel} from '@material-ui/core';
 import axios from '../axios';
 import { AUTH_SUCCESS, AUTH_FAIL } from '../store/actionTypes';
 import './auth.css';
@@ -20,7 +20,6 @@ class Login extends React.Component {
     inputChangeHandler = (event) => {
         this.setState(prevState => {
             const updatedForm = { ...prevState.loginForm, [event.target.name]: event.target.value }
-    
             return { loginForm: updatedForm }
 
         })
@@ -30,7 +29,7 @@ class Login extends React.Component {
         event.preventDefault();
         axios.post('/login', { email: this.state.loginForm.email, password: this.state.loginForm.password })
             .then(({ data }) => {
-                console.log(data.token);
+        
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userId', data._id);
                 const remainingMilliseconds = 60 * 60 * 1000;
@@ -41,12 +40,12 @@ class Login extends React.Component {
                 localStorage.setItem('expiryDate', expiryDate.toISOString());
                 this.props.onLogout(remainingMilliseconds);
                 this.props.history.goBack();
-                // error-handling
+        
             })
             .catch(err => {
-                console.log(err);
+                this.props.dispatch({ type: AUTH_FAIL, error: err });
             })
-        //
+        
     }
 
     gotoSignupPage = () => {
@@ -61,7 +60,7 @@ class Login extends React.Component {
         return (
 
             <div className="auth__form">
-                <FormControl onSubmit={this.onLogin}>
+                <form onSubmit={this.onLogin}>
                     <div className="form__control">
                         <FormLabel>Email</FormLabel>
                         <Input
@@ -82,8 +81,8 @@ class Login extends React.Component {
                             value={this.state.loginForm.password}
                         />
                     </div>
-                    <Button  variant="outlined" color="primary">Login</Button>
-                </FormControl>
+                    <Button type="submit"  variant="outlined" color="primary">Login</Button>
+                </form>
                 <Button  variant="contained" color="primary" onClick={this.gotoSignupPage}>Don't have an account? Sign up here.</Button>
                 <Button  variant="contained" color="secondary" onClick={this.authCancelHandler}>Cancel</Button>
             </div>

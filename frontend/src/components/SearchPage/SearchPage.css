@@ -1,5 +1,6 @@
 .searchPage__info {
     padding: 20px;
+    
 }
 
 .searchPage__info > p {
@@ -11,8 +12,81 @@
     margin-bottom: 30px;
 }
 
-.searchPage__info > button{
-    border-radius: 30px;
+.filter__options {
+    display: inline-flex;
+}
+
+.filter__options >div> button{
+
     text-transform: inherit;
     margin: 5px;
 }
+
+.options > select {
+    outline: none;
+    border: none;
+    margin: 10px 15px;
+    font-size: medium;
+}
+
+
+.options > p {
+    margin: 10px auto ;
+}
+
+.options {
+    display: inline-flex;
+    border: 1px solid gray;
+    margin: auto 15px;
+    border-radius: 30px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.options > button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: medium;
+    padding: 5px 10px;
+}
+
+.options.active {
+    border: 1px solid green;
+}
+
+
+.options.active > button{
+    color: green;
+}
+
+
+
+/* .options >  button {
+    border: hidden;
+}
+
+.options{
+    display: inline-flex;
+    border: 1px solid gray;
+    border-radius: 30px;
+   margin: 0 15px;
+}
+
+.options:hover{
+    cursor: pointer;
+}
+
+.options > button {
+    margin-top: 10px;
+    margin-right: 15px;
+    width: 100%;
+}
+
+.option{
+    border: none;
+    outline: none; 
+    visibility: hidden;
+    width: 0;
+    height: 0;
+}  */

@@ -2,6 +2,7 @@ import React from 'react';
 import LoginPage from './pages/Login';
 import SignupPage from './pages/Signup';
 import { withState } from './airbnb-context';
+import ErrorHandler from './components/ErrorHandler/ErrorHandler';
 import FullProperty from './components/FullProperty/FullProperty';
 import AddPropertyPage from './pages/AddProperty';
 import Book from './components/Book/Book';
@@ -17,13 +18,14 @@ import './App.css';
 
 class App extends React.Component {
 
+
+
   componentDidMount() {
     window.onunload = () => {
       localStorage.clear();
     }
 
     const token = localStorage.getItem('token');
-    console.log(token);
     const expiryDate = localStorage.getItem('expiryDate');
     if (!token || !expiryDate) {
       return;
@@ -55,25 +57,31 @@ class App extends React.Component {
     }, millisecs)
   }
 
+
   render() {
+   /*  const date1 = new Date('08/19/2021')
+    const date2 = new Date('08/20/2021')
+    console.log(date1.getTime() < date2.getTime()); */
     return (
       <div className="app">
         <Router>
-          <Header />
 
-          <Switch>
-            <Route path="/host" component={AddPropertyPage} />
-            <Route path="/book/:propertyId" exact component={Book} />
-            <Route path="/explore/:propertyId" component={FullProperty} />
-            <Route path="/orders" component={Orders} />
-            <Route path="/signup" render={props => <SignupPage {...props} onLogout={(secs) => this.setAutoLogoutHandler(secs)} />} />
-            <Route path="/login" render={props => <LoginPage {...props} onLogout={(secs) => this.setAutoLogoutHandler(secs)} />} />
-            <Route path="/search" component={SearchPage} />
+            <Header />
+          {this.props.state.error ? <ErrorHandler />
+            : <Switch>
+              <Route path="/host" component={AddPropertyPage} />
+              <Route path="/book/:propertyId" exact component={Book} />
+              <Route path="/explore/:propertyId" component={FullProperty} />
+              <Route path="/orders" component={Orders} />
+              <Route path="/signup" render={props => <SignupPage {...props} onLogout={(secs) => this.setAutoLogoutHandler(secs)} />} />
+              <Route path="/login" render={props => <LoginPage {...props} onLogout={(secs) => this.setAutoLogoutHandler(secs)} />} />
+              <Route path="/search" render={props => <SearchPage {...props} />} />
 
-            <Route path="/" component={Home} />
+              <Route path="/" component={Home} />
 
-          </Switch>
-          <Footer />
+            </Switch>}
+          <Footer /> 
+ 
         </Router>
       </div>
     );
@@ -81,3 +89,4 @@ class App extends React.Component {
 }
 
 export default withState(App);
+

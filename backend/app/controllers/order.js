@@ -1,4 +1,6 @@
 const Order = require('../models/order');
+const Property = require('../models/property');
+const moment = require('moment');
 const mongoose = require('mongoose');
 
 exports.orderPlace = async (req, res) => {
@@ -10,20 +12,31 @@ exports.orderPlace = async (req, res) => {
         let { propertyId } = req.params;
         propertyId = mongoose.Types.ObjectId(propertyId);
         const userId = req.userId;
-        const { address, contactNo, price, days, nights, paymentMode } = req.body;
+        const { address, contactNo, price, days, paymentMode, startDate, endDate } = req.body;
 
         const order = new Order({
             address: address,
             contactNo: contactNo,
             price: price,
             days: days,
-            nights: nights,
             paymentMode: paymentMode,
+            startDate: startDate,
+            endDate: endDate,
             userId: userId,
             propertyId: propertyId
         });
 
+        const date1 = new Date(startDate).setHours(24,0,0,0);
+        const date2 = new Date(endDate).setHours(24,0,0,0);
         const createdOrder = await order.save();
+        await Property.updateOne({ _id: propertyId }, {
+            $addToSet: {
+                "booking": [{
+                    "startDate": new Date(date1),
+                    "endDate": new Date(date2)
+                }]
+            }
+        });
         return res.send({
             ...createdOrder._doc,
             _id: createdOrder._id.toString(),
@@ -33,14 +46,19 @@ exports.orderPlace = async (req, res) => {
             updatedAt: createdOrder.updatedAt.toISOString()
         })
     } catch (e) {
-        console.log(e);
+        console.log(e)
+        return res.status(500).json({ message: 'Internal Server Error!' });
     }
 }
 
 exports.getOrders = async (req, res) => {
-    try {
+    if (!req.isAuth) {
+        throw new Error('Not authenticated !')
+    }
 
-        const orders = await Order.find();
+    try {
+        const userId = req.userId;
+        const orders = await Order.find({ userId: userId });
         if (!orders) {
             throw new Error('Error while fetching order !')
         }
@@ -58,6 +76,6 @@ exports.getOrders = async (req, res) => {
         });
 
     } catch (e) {
-        console.log(e);
+        return res.status(500).json({ message: 'Internal Server Error!' });
     }
 }

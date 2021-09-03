@@ -42,3 +42,8 @@
     color: green;
     font-weight: 400;
 }
+
+.react-multi-carousel-list{
+    max-width: 70%;
+    margin: 0px auto;
+}

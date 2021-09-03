@@ -33,6 +33,18 @@ const PropertySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    booking: {
+        type: []
+    },
+    city: {
+        type: String
+    },
+    guests: {
+        type: Number
+    },
+    freeCancellation: {
+        type: Boolean
     }
 },
     { timestamps: true }

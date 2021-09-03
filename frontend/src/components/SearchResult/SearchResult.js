@@ -1,5 +1,4 @@
 import React from 'react';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import StarIcon from '@material-ui/icons/Star';
 import './SearchResult.css';
 
@@ -8,9 +7,7 @@ function SearchResult({ img, location, title, description, star, price, onClick 
     return (
         <div className="searchResult" onClick={onClick}>
             <img src={img} alt="" />
-            <FavoriteBorderIcon
-                className="searchResult__heart"
-            />
+           
             <div className="searchResult__info">
                 <div className="searchResult_infoTop">
                     <p>{location}</p>
